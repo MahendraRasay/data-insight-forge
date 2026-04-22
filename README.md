@@ -13,7 +13,7 @@ InsightForge is a stateless full-stack data analysis app that lets you upload a 
 
 ## Architecture
 
-React frontend -> Node.js Express gateway -> Python FastAPI ML service -> OpenAI API
+React frontend -> Node.js Express gateway -> Python FastAPI ML service
 
 The app does not use a database. Uploaded files and generated artifacts are temporary.
 
