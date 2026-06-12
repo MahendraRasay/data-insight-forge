@@ -20,7 +20,7 @@ from utils.pdf_report import generate_pdf_report
 
 load_dotenv()
 
-app = FastAPI(title="AI Data Insight Engine - ML Service")
+app = FastAPI(title="AI Data Insight Engine - Embedded ML Service")
 
 app.add_middleware(
     CORSMiddleware,
@@ -61,7 +61,7 @@ def _to_json_safe(value: Any) -> Any:
 
 @app.get("/health")
 def health() -> Dict[str, str]:
-    return {"status": "ok", "service": "ml-service"}
+    return {"status": "ok", "service": "embedded-ml-service"}
 
 
 @app.post("/analyze")

@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import axios from "axios";
 import FormData from "form-data";
 
-const pythonServiceUrl = process.env.PYTHON_SERVICE_URL || "http://localhost:8000";
+const pythonServiceUrl = process.env.PYTHON_SERVICE_URL || "http://127.0.0.1:8000";
 
 export async function handleUpload(req, res) {
   if (!req.file) {

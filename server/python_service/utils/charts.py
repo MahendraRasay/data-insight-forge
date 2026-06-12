@@ -3,7 +3,6 @@ import io
 from typing import Dict, List
 
 import matplotlib
-
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
