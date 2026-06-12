@@ -60,12 +60,8 @@ PORT=5000
 # Set this only if using an external Python service.
 # PYTHON_SERVICE_URL=http://127.0.0.1:8000
 MAX_FILE_SIZE_MB=500
-OPENAI_MODEL=gpt-4.1-mini
 MAX_CONTEXT_ROWS=8
-OPENAI_API_KEY=
 ```
-
-`OPENAI_API_KEY` is optional. Add it only if you want AI insights and chat responses; the app still runs without it.
 
 ### client/.env
 
@@ -147,18 +143,37 @@ Backend env vars on Render:
 
 ```env
 MAX_FILE_SIZE_MB=500
-OPENAI_MODEL=gpt-4.1-mini
 MAX_CONTEXT_ROWS=8
-OPENAI_API_KEY=
 ```
 
 Leave `PYTHON_SERVICE_URL` unset so the Node gateway starts the embedded Python service automatically.
 
-If Render’s image exposes `python3` instead of `python`, use this build command instead:
+If Render's image exposes `python3` instead of `python`, use this build command instead:
 
 ```text
 npm install && python3 -m pip install -r python_service/requirements.txt
 ```
+
+### Koyeb backend
+
+Use the `server` folder with the included `Dockerfile`.
+
+```text
+Service type: Web service
+Build method: Dockerfile
+Dockerfile path: server/Dockerfile
+Source / root directory: repository root
+Port: 5000
+```
+
+Koyeb environment variables:
+
+```env
+MAX_FILE_SIZE_MB=500
+MAX_CONTEXT_ROWS=8
+```
+
+Do not set `PYTHON_SERVICE_URL` on Koyeb. The Node process will start the embedded Python service locally inside the container.
 
 ### Cloudflare Pages frontend
 
@@ -181,23 +196,20 @@ Build Output Directory: dist
 Backend API:
 
 - `POST /api/upload`
-- `POST /api/chat`
 - `POST /api/download`
 - `GET /health`
 
 Embedded Python API (internal, auto-started when `PYTHON_SERVICE_URL` is unset):
 
 - `POST /analyze`
-- `POST /chat`
 - `POST /download`
 - `GET /health`
 
 ## Notes
 
 - The frontend is focused on dataset analysis and visualization.
-- Files are stored temporarily and cleaned up after processing.
-- AI features are optional and only require `OPENAI_API_KEY` if you want LLM-backed insights and chat.
-- If the key is missing, the app still works with rule-based analysis.
+- Uploaded CSV files are deleted after analysis; temporary chart and PDF files are auto-cleaned.
+- Rule-based insights are generated for data quality checks, correlations, outliers, and skewness detection.
 
 ## Troubleshooting
 
@@ -210,7 +222,6 @@ Embedded Python API (internal, auto-started when `PYTHON_SERVICE_URL` is unset):
   npm run dev
   ```
 
-- If AI responses are empty or fallback text appears, check backend `OPENAI_API_KEY`.
 - If PowerShell blocks activation of `.venv`, use the Python executable directly from `.venv\Scripts\python.exe`.
 
 ## Verification

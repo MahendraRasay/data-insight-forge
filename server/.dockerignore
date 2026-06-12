@@ -1,0 +1,9 @@
+node_modules
+.git
+.venv
+__pycache__
+python_service/__pycache__
+python_service/generated_reports
+python_service/temp_charts
+uploads/*.tmp
+uploads/*.csv

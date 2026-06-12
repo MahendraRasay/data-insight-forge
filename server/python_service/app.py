@@ -4,21 +4,14 @@ from typing import Any, Dict
 
 import numpy as np
 import pandas as pd
-from dotenv import load_dotenv
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
 from utils.charts import generate_charts
-from utils.insights import (
-    answer_dataset_question,
-    generate_llm_insights,
-    generate_rule_based_insights,
-)
+from utils.insights import generate_rule_based_insights
 from utils.pdf_report import generate_pdf_report
-
-load_dotenv()
 
 app = FastAPI(title="AI Data Insight Engine - Embedded ML Service")
 
@@ -30,14 +23,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
 MAX_CONTEXT_ROWS = int(os.getenv("MAX_CONTEXT_ROWS", "8"))
-
-
-class ChatRequest(BaseModel):
-    question: str
-    context: Dict[str, Any]
 
 
 class DownloadRequest(BaseModel):
@@ -113,24 +99,8 @@ async def analyze(file: UploadFile = File(...)) -> JSONResponse:
 
     charts = generate_charts(df)
     rule_insights = generate_rule_based_insights(df)
-    ai_insights = generate_llm_insights(
-        model=OPENAI_MODEL,
-        api_key=OPENAI_API_KEY,
-        summary_stats=summary_stats,
-        missing_values=missing_values,
-        correlations=corr_data,
-        dtypes=dtypes,
-    )
 
     sample_rows = _to_json_safe(df.head(MAX_CONTEXT_ROWS).to_dict(orient="records"))
-    dataset_context = {
-        "overview": overview,
-        "summary_stats": summary_stats,
-        "missing_values": missing_values,
-        "correlations": corr_data,
-        "dtypes": dtypes,
-        "sample_rows": sample_rows,
-    }
 
     return JSONResponse(
         {
@@ -145,25 +115,9 @@ async def analyze(file: UploadFile = File(...)) -> JSONResponse:
             "categorical_summary": categorical_summary,
             "charts": charts,
             "rule_based_insights": rule_insights,
-            "ai_insights": ai_insights,
             "sample_rows": sample_rows,
-            "dataset_context": dataset_context,
         }
     )
-
-
-@app.post("/chat")
-def chat(request: ChatRequest) -> Dict[str, str]:
-    try:
-        answer = answer_dataset_question(
-            model=OPENAI_MODEL,
-            api_key=OPENAI_API_KEY,
-            context=request.context,
-            question=request.question,
-        )
-        return {"answer": answer}
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Failed to generate chat response: {exc}") from exc
 
 
 @app.post("/download")
