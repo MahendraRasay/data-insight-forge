@@ -11,16 +11,17 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends nodejs \
   && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app/server
+WORKDIR /app
 
-COPY server/package*.json ./
+COPY package*.json ./
 RUN npm install --omit=dev
 
-COPY server/python_service/ ./python_service/
-RUN python -m pip install --no-cache-dir -r python_service/requirements.txt
+COPY python_service ./python_service
+COPY src ./src
 
-COPY server/src/ ./src/
 RUN mkdir -p uploads
+
+RUN python -m pip install --no-cache-dir -r python_service/requirements.txt
 
 EXPOSE 5000
 
