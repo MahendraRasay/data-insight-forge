@@ -122,13 +122,6 @@ After both services are running, open:
 - Frontend: http://localhost:5173
 - Backend health: http://localhost:5000/health
 
-## Deployment (Free-Friendly)
-
-Recommended layout:
-
-- Frontend: Cloudflare Pages
-- Backend: one Render Web Service (`server` folder)
-
 ### Render backend
 
 Use the `server` folder as the Render root.
@@ -153,27 +146,6 @@ If Render's image exposes `python3` instead of `python`, use this build command 
 ```text
 npm install && python3 -m pip install -r python_service/requirements.txt
 ```
-
-### Koyeb backend
-
-Use the `server` folder with the included `Dockerfile`.
-
-```text
-Service type: Web service
-Build method: Dockerfile
-Dockerfile path: server/Dockerfile
-Source / root directory: repository root
-Port: 5000
-```
-
-Koyeb environment variables:
-
-```env
-MAX_FILE_SIZE_MB=500
-MAX_CONTEXT_ROWS=8
-```
-
-Do not set `PYTHON_SERVICE_URL` on Koyeb. The Node process will start the embedded Python service locally inside the container.
 
 ### Cloudflare Pages frontend
 
