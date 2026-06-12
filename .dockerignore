@@ -1,0 +1,11 @@
+.git
+.venv
+client/node_modules
+server/node_modules
+server/.venv
+server/python_service/__pycache__
+server/python_service/generated_reports
+server/python_service/temp_charts
+server/uploads/*
+*.log
+.DS_Store
